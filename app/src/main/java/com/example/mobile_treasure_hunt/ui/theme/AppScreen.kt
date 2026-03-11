@@ -1,5 +1,8 @@
 package com.example.mobile_treasure_hunt.ui.theme
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +26,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,6 +36,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mobile_treasure_hunt.ui.theme.AppViewModel
+
 
 enum class TreasureAppScreen {
     Permission,
@@ -45,43 +51,51 @@ enum class TreasureAppScreen {
 fun TreasureHuntApp(viewModel: AppViewModel = viewModel()) {
     val navController = rememberNavController()
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    // Quick check if permission has already been granted for the device
+    val startDestination = remember {
+        if (ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            ) {
+            TreasureAppScreen.GameStart.name
+        } else {
+            TreasureAppScreen.Permission.name
+        }
+    }
 
     NavHost(
         navController = navController,
-        startDestination = TreasureAppScreen.Permission.name
+        startDestination = startDestination
     ) {
         composable(route = TreasureAppScreen.Permission.name) {
             PermissionScreen(
                 permissionDenied = uiState.permissionDenied,
-                permissionResult = {
-                        granted -> viewModel.updatePermission(granted)
-                if (granted) {
-                    navController.navigate(TreasureAppScreen.GameStart.name) {
-                        // Prevent issue of hitting back and getting permissions screen again
-                        popUpTo(TreasureAppScreen.Permission.name) {
-                            inclusive = true
+                permissionResult = {granted ->
+
+                    viewModel.updatePermission(granted)
+
+                    if (granted) {
+                        navController.navigate(TreasureAppScreen.GameStart.name) {
+
+                            // Prevent issue of hitting back and getting permissions screen again
+                            popUpTo(TreasureAppScreen.Permission.name) {
+                                inclusive = true
+                            }
                         }
                     }
-                    }
                 },
-                    proceed = {
-                        navController.navigate(TreasureAppScreen.GameStart.name)
-                    }
+
+                proceed = {
+                    navController.navigate(TreasureAppScreen.GameStart.name)
+                }
             )
         }
 
         composable(route = TreasureAppScreen.GameStart.name) {
             Text("Hi")
         }
-//
-//        composable(route = CityAppScreen.RecommendationDetails.name) {
-//            DetailScreen(
-//                appViewModel = appViewModel,
-//                onBack = {
-//                    navController.popBackStack()
-//                }
-//            )
-//        }
     }
 }
 
