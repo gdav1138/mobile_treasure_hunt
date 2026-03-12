@@ -48,9 +48,9 @@ enum class TreasureAppScreen {
 }
 
 @Composable
-fun TreasureHuntApp(viewModel: AppViewModel = viewModel()) {
+fun TreasureHuntApp(appViewModel: AppViewModel = viewModel()) {
     val navController = rememberNavController()
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by appViewModel.uiState.collectAsState()
     val context = LocalContext.current
 
     // Quick check if permission has already been granted for the device
@@ -74,7 +74,7 @@ fun TreasureHuntApp(viewModel: AppViewModel = viewModel()) {
                 permissionDenied = uiState.permissionDenied,
                 permissionResult = {granted ->
 
-                    viewModel.updatePermission(granted)
+                    appViewModel.updatePermission(granted)
 
                     if (granted) {
                         navController.navigate(TreasureAppScreen.GameStart.name) {
@@ -94,7 +94,11 @@ fun TreasureHuntApp(viewModel: AppViewModel = viewModel()) {
         }
 
         composable(route = TreasureAppScreen.GameStart.name) {
-            Text("Hi")
+            StartScreen(
+                adventureStart = {
+
+                }
+            )
         }
     }
 }
