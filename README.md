@@ -3,7 +3,8 @@
 A GPS-based Android treasure hunt game built with Kotlin and Jetpack Compose. Players solve riddles that hint at real-world locations, navigate there on foot, and verify they've arrived using live GPS positioning and Haversine distance calculation.
 
 <!-- If you have a screenshot or screen recording, add it here: -->
-<!-- ![Mobile Treasure Hunt gameplay](screenshot.png) -->
+<img width="720" height="1080" alt="MobileTreasureHuntShowcase-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/6b25d2fe-e9c8-4655-8e3f-684e6f9d6587" />
+
 
 ## How It Works
 
